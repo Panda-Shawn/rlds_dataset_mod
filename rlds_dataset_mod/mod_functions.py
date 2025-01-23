@@ -3,6 +3,7 @@ from abc import ABC, abstractmethod
 import dlimp as dl
 import tensorflow as tf
 import tensorflow_datasets as tfds
+import numpy as np
 
 
 class TfdsModFunction(ABC):
@@ -164,7 +165,7 @@ class FlipWristImgChannels(FlipImgChannels):
 
 
 class AddFilePathEpisodeID(TfdsModFunction):
-    FAKE_FIlE_PATH = "fake_file_path"
+    FAKE_FILE_PATH = "fake_file_path"
     EPISODE_COUNTER = 0
 
     @classmethod
@@ -172,25 +173,30 @@ class AddFilePathEpisodeID(TfdsModFunction):
         cls,
         features: tfds.features.FeaturesDict,
     ) -> tfds.features.FeaturesDict:
-        return features  # no feature changes
+        new_features = tfds.features.FeaturesDict({
+            **{key: features[key] for key in features.keys() if key not in ("episode_metadata",)},
+            "episode_metadata": {
+                **{key: features["episode_metadata"][key] for key in features["episode_metadata"].keys() if key not in ("file_path", "episode_id",)},
+                "file_path": tfds.features.Text() if "file_path" not in features["episode_metadata"].keys() else features["episode_metadata"]["file_path"],
+                "episode_id": tfds.features.Scalar(dtype=tf.int32) if "episode_id" not in features["episode_metadata"].keys() else features["episode_metadata"]["episode_id"],
+            }
+        })
+        return new_features  # no feature changes
 
     @classmethod
     def mod_dataset(cls, ds: tf.data.Dataset) -> tf.data.Dataset:
-        def episode_map_fn(episode):
-            cls.EPISODE_COUNTER+=1 
-            if "episode_metadata" not in episode.keys():
-                episode["episode_metadata"] = {
-                    "episode_id": str(cls.EPISODE_COUNTER),
-                    "file_path": cls.FAKE_FIlE_PATH,
+        def add_file_path_episode_id_place(episode):
+            episode = {
+                **{key: episode[key] for key in episode.keys() if key not in ("episode_metadata",)},
+                "episode_metadata": {
+                    **{key: episode["episode_metadata"][key] for key in episode["episode_metadata"].keys() if key not in ("file_path", "episode_id",)},
+                    "file_path": tf.convert_to_tensor(cls.FAKE_FILE_PATH, dtype=tf.string) if "file_path" not in episode["episode_metadata"].keys() else episode["episode_metadata"]["file_path"],
+                    "episode_id": tf.convert_to_tensor(cls.EPISODE_COUNTER, dtype=tf.int32) if "episode_id" not in episode["episode_metadata"].keys() else episode["episode_metadata"]["episode_id"],
                 }
-            else:
-                if "episode_id" not in episode["episode_metadata"].keys():
-                    episode["episode_metadata"]["episode_id"] = str(cls.EPISODE_COUNTER)
-                if "file_path" not in episode["episode_metadata"].keys():
-                    episode["episode_metadata"]["file_path"] = cls.FAKE_FIlE_PATH
+            }
+            cls.EPISODE_COUNTER += 1
             return episode
-
-        return ds.map(episode_map_fn)
+        return ds.map(add_file_path_episode_id_place)
 
 
 TFDS_MOD_FUNCTIONS = {
