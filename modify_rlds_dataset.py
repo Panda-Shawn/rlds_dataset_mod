@@ -24,6 +24,16 @@ flags.DEFINE_integer(
 )
 
 
+def unique_number_generator():
+    counter = 0
+    while True:
+        yield counter
+        counter += 1
+
+
+unique_number_gen = unique_number_generator()
+
+
 def mod_features(features):
     """Modifies feature dict."""
     for mod in FLAGS.mods:
@@ -36,7 +46,11 @@ def mod_dataset_generator(builder, split, mods):
     ds = builder.as_dataset(split=split)
     for mod in mods:
         ds = TFDS_MOD_FUNCTIONS[mod].mod_dataset(ds)
-    for episode in tfds.core.dataset_utils.as_numpy(ds):
+    for episode_id, episode in enumerate(tfds.core.dataset_utils.as_numpy(ds)):
+        if "add_file_path_episode_id" in mods:
+            episode_id = next(unique_number_gen)
+            print("episode_id", episode_id)
+            episode["episode_metadata"]["episode_id"] += episode_id
         yield episode
 
 

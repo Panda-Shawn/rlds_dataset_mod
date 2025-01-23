@@ -3,7 +3,6 @@ from abc import ABC, abstractmethod
 import dlimp as dl
 import tensorflow as tf
 import tensorflow_datasets as tfds
-import numpy as np
 
 
 class TfdsModFunction(ABC):
@@ -165,8 +164,7 @@ class FlipWristImgChannels(FlipImgChannels):
 
 
 class AddFilePathEpisodeID(TfdsModFunction):
-    FAKE_FILE_PATH = "fake_file_path"
-    EPISODE_COUNTER = 0
+    fake_file_path = "fake_file_path"
 
     @classmethod
     def mod_features(
@@ -185,18 +183,17 @@ class AddFilePathEpisodeID(TfdsModFunction):
 
     @classmethod
     def mod_dataset(cls, ds: tf.data.Dataset) -> tf.data.Dataset:
-        def add_file_path_episode_id_place(episode):
+        def add_file_path_episode_id(episode):
             episode = {
                 **{key: episode[key] for key in episode.keys() if key not in ("episode_metadata",)},
                 "episode_metadata": {
                     **{key: episode["episode_metadata"][key] for key in episode["episode_metadata"].keys() if key not in ("file_path", "episode_id",)},
-                    "file_path": tf.convert_to_tensor(cls.FAKE_FILE_PATH, dtype=tf.string) if "file_path" not in episode["episode_metadata"].keys() else episode["episode_metadata"]["file_path"],
-                    "episode_id": tf.convert_to_tensor(cls.EPISODE_COUNTER, dtype=tf.int32) if "episode_id" not in episode["episode_metadata"].keys() else episode["episode_metadata"]["episode_id"],
+                    "file_path": tf.convert_to_tensor(cls.fake_file_path, dtype=tf.string) if "file_path" not in episode["episode_metadata"].keys() else episode["episode_metadata"]["file_path"],
+                    "episode_id": tf.convert_to_tensor(0, dtype=tf.int32) if "episode_id" not in episode["episode_metadata"].keys() else episode["episode_metadata"]["episode_id"],
                 }
             }
-            cls.EPISODE_COUNTER += 1
             return episode
-        return ds.map(add_file_path_episode_id_place)
+        return ds.map(add_file_path_episode_id)
 
 
 TFDS_MOD_FUNCTIONS = {
