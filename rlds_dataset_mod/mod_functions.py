@@ -163,11 +163,42 @@ class FlipWristImgChannels(FlipImgChannels):
     FLIP_KEYS = ["wrist_image", "hand_image"]
 
 
+class AddFilePathEpisodeID(TfdsModFunction):
+    FAKE_FIlE_PATH = "fake_file_path"
+    EPISODE_COUNTER = 0
+
+    @classmethod
+    def mod_features(
+        cls,
+        features: tfds.features.FeaturesDict,
+    ) -> tfds.features.FeaturesDict:
+        return features  # no feature changes
+
+    @classmethod
+    def mod_dataset(cls, ds: tf.data.Dataset) -> tf.data.Dataset:
+        def episode_map_fn(episode):
+            cls.EPISODE_COUNTER+=1 
+            if "episode_metadata" not in episode.keys():
+                episode["episode_metadata"] = {
+                    "episode_id": str(cls.EPISODE_COUNTER),
+                    "file_path": cls.FAKE_FIlE_PATH,
+                }
+            else:
+                if "episode_id" not in episode["episode_metadata"].keys():
+                    episode["episode_metadata"]["episode_id"] = str(cls.EPISODE_COUNTER)
+                if "file_path" not in episode["episode_metadata"].keys():
+                    episode["episode_metadata"]["file_path"] = cls.FAKE_FIlE_PATH
+            return episode
+
+        return ds.map(episode_map_fn)
+
+
 TFDS_MOD_FUNCTIONS = {
     "resize_and_jpeg_encode": ResizeAndJpegEncode,
     "filter_success": FilterSuccess,
     "flip_image_channels": FlipImgChannels,
     "flip_wrist_image_channels": FlipWristImgChannels,
+    "add_file_path_episode_id": AddFilePathEpisodeID,
 }
 
 
