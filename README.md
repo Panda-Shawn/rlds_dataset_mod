@@ -8,9 +8,9 @@ in parallel for increased conversion speed.
 
 ## Adding episode_id and file_path
 
-The command below adds episode_id and file_path in episode_metadata for CoT labeling.
+The command below adds episode_id and file_path in episode_metadata for CoT labeling. It is critical to set `--n_workers` as 1 to get a unique episode_id.
 ```
-python3 modify_rlds_dataset.py --dataset=<name_of_your_tfds_dataset> --mods=add_file_path_episode_id --target_dir=<path_where_mod_data_is_written>
+python3 modify_rlds_dataset.py --dataset=<name_of_your_tfds_dataset> --mods=add_file_path_episode_id --target_dir=<path_where_mod_data_is_written> --n_workers 1
 ```
 
 ## Installation
