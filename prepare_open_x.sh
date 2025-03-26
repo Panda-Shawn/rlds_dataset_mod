@@ -13,8 +13,8 @@ Adjust workers to fit the available memory of your machine, the more workers + e
 The default values are tested with a server with ~120GB of RAM and 24 cores.
 '
 
-DOWNLOAD_DIR=<your_download_dir>
-CONVERSION_DIR=<temporary_dir_for_conversion>
+DOWNLOAD_DIR=/data2/lzixuan/rfm_dataset/test/oxe
+CONVERSION_DIR=/data2/lzixuan/rfm_dataset/test/conversion
 N_WORKERS=20                  # number of workers used for parallel conversion --> adjust based on available RAM
 MAX_EPISODES_IN_MEMORY=200    # number of episodes converted in parallel --> adjust based on available RAM
 
@@ -28,33 +28,33 @@ echo "!!! Instead download the bridge_dataset from here: https://rail.eecs.berke
 # format: [dataset_name, dataset_version, transforms]
 DATASET_TRANSFORMS=(
     # Datasets used for OpenVLA: https://openvla.github.io/
-    "fractal20220817_data 0.1.0 resize_and_jpeg_encode"
-    "bridge 0.1.0 resize_and_jpeg_encode"  
-    "kuka 0.1.0 resize_and_jpeg_encode,filter_success"
-    "taco_play 0.1.0 resize_and_jpeg_encode"
-    "jaco_play 0.1.0 resize_and_jpeg_encode"
-    "berkeley_cable_routing 0.1.0 resize_and_jpeg_encode"
-    "roboturk 0.1.0 resize_and_jpeg_encode"
-    "viola 0.1.0 resize_and_jpeg_encode"
-    "berkeley_autolab_ur5 0.1.0 resize_and_jpeg_encode,flip_wrist_image_channels"
-    "toto 0.1.0 resize_and_jpeg_encode"
-    "language_table 0.1.0 resize_and_jpeg_encode"
-    "stanford_hydra_dataset_converted_externally_to_rlds 0.1.0 resize_and_jpeg_encode,flip_wrist_image_channels,flip_image_channels"
-    "austin_buds_dataset_converted_externally_to_rlds 0.1.0 resize_and_jpeg_encode"
-    "nyu_franka_play_dataset_converted_externally_to_rlds 0.1.0 resize_and_jpeg_encode"
-    "furniture_bench_dataset_converted_externally_to_rlds 0.1.0 resize_and_jpeg_encode"
-    "ucsd_kitchen_dataset_converted_externally_to_rlds 0.1.0 resize_and_jpeg_encode"
-    "austin_sailor_dataset_converted_externally_to_rlds 0.1.0 resize_and_jpeg_encode"
-    "austin_sirius_dataset_converted_externally_to_rlds 0.1.0 resize_and_jpeg_encode"
-    "bc_z 0.1.0 resize_and_jpeg_encode"
-    "dlr_edan_shared_control_converted_externally_to_rlds 0.1.0 resize_and_jpeg_encode"
-    "iamlab_cmu_pickup_insert_converted_externally_to_rlds 0.1.0 resize_and_jpeg_encode"
-    "utaustin_mutex 0.1.0 resize_and_jpeg_encode,flip_wrist_image_channels,flip_image_channels"
-    "berkeley_fanuc_manipulation 0.1.0 resize_and_jpeg_encode,flip_wrist_image_channels,flip_image_channels"
-    "cmu_stretch 0.1.0 resize_and_jpeg_encode"
-    "dobbe 0.0.1 resize_and_jpeg_encode"
-    "fmb 0.0.1 resize_and_jpeg_encode"
-    "droid 1.0.0 resize_and_jpeg_encode"
+    # "fractal20220817_data 0.1.0 resize_and_jpeg_encode" # 111.1 98
+    # "bridge 0.1.0 resize_and_jpeg_encode"  
+    # "kuka 0.1.0 resize_and_jpeg_encode,filter_success" # 778.0 70
+    "taco_play 0.1.0 resize_and_jpeg_encode" # 47.8 126
+    # "jaco_play 0.1.0 resize_and_jpeg_encode" # 9.2 3.0
+    # "berkeley_cable_routing 0.1.0 resize_and_jpeg_encode" # 4.7 3.3
+    # "roboturk 0.1.0 resize_and_jpeg_encode" # 45.4 4.5
+    # "viola 0.1.0 resize_and_jpeg_encode" # 10.4 3.2
+    # "berkeley_autolab_ur5 0.1.0 resize_and_jpeg_encode,flip_wrist_image_channels" # 76.4 20
+    # "toto 0.1.0 resize_and_jpeg_encode" # 127.7 11
+    # "language_table 0.1.0 resize_and_jpeg_encode" # 399.9 194
+    # "stanford_hydra_dataset_converted_externally_to_rlds 0.1.0 resize_and_jpeg_encode,flip_wrist_image_channels,flip_image_channels" # 72.5 16
+    # "austin_buds_dataset_converted_externally_to_rlds 0.1.0 resize_and_jpeg_encode" # 1.5 1.2
+    # "nyu_franka_play_dataset_converted_externally_to_rlds 0.1.0 resize_and_jpeg_encode" # 5.2 13
+    # "furniture_bench_dataset_converted_externally_to_rlds 0.1.0 resize_and_jpeg_encode" # 115.0 141
+    # "ucsd_kitchen_dataset_converted_externally_to_rlds 0.1.0 resize_and_jpeg_encode" # 1.3 (110M)
+    # "austin_sailor_dataset_converted_externally_to_rlds 0.1.0 resize_and_jpeg_encode" # 18.8 14
+    # "austin_sirius_dataset_converted_externally_to_rlds 0.1.0 resize_and_jpeg_encode" # 6.6 8.0
+    # "bc_z 0.1.0 resize_and_jpeg_encode" # 80.5 128
+    # "dlr_edan_shared_control_converted_externally_to_rlds 0.1.0 resize_and_jpeg_encode" # 3.1 (263M)
+    # "iamlab_cmu_pickup_insert_converted_externally_to_rlds 0.1.0 resize_and_jpeg_encode" # 50.3 5.9
+    # "utaustin_mutex 0.1.0 resize_and_jpeg_encode,flip_wrist_image_channels,flip_image_channels" # 20.8 16
+    # "berkeley_fanuc_manipulation 0.1.0 resize_and_jpeg_encode,flip_wrist_image_channels,flip_image_channels" # 8.8 2.5
+    # "cmu_stretch 0.1.0 resize_and_jpeg_encode" # (728M) (510M)
+    # "dobbe 0.0.1 resize_and_jpeg_encode" # 67.6 22
+    # "fmb 0.0.1 resize_and_jpeg_encode" # (1.2T) (1.2T)
+    # "droid 1.0.0 resize_and_jpeg_encode"
 )
 
 for tuple in "${DATASET_TRANSFORMS[@]}"; do
@@ -64,7 +64,7 @@ for tuple in "${DATASET_TRANSFORMS[@]}"; do
   VERSION=${strings[1]}
   TRANSFORM=${strings[2]}
   mkdir ${DOWNLOAD_DIR}/${DATASET}
-  gsutil -m cp -r gs://gresearch/robotics/${DATASET}/${VERSION} ${DOWNLOAD_DIR}/${DATASET}
+  gsutil -m cp -n -r gs://gresearch/robotics/${DATASET}/${VERSION} ${DOWNLOAD_DIR}/${DATASET}
   python3 modify_rlds_dataset.py --dataset=$DATASET --data_dir=$DOWNLOAD_DIR --target_dir=$CONVERSION_DIR --mods=$TRANSFORM --n_workers=$N_WORKERS --max_episodes_in_memory=$MAX_EPISODES_IN_MEMORY
   rm -rf ${DOWNLOAD_DIR}/${DATASET}
   mv ${CONVERSION_DIR}/${DATASET} ${DOWNLOAD_DIR}
