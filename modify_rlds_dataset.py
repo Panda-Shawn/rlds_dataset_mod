@@ -47,10 +47,10 @@ def mod_dataset_generator(builder, split, mods):
     for mod in mods:
         ds = TFDS_MOD_FUNCTIONS[mod].mod_dataset(ds)
     for episode_id, episode in enumerate(tfds.core.dataset_utils.as_numpy(ds)):
-        if "add_file_path_episode_id" in mods:
-            episode_id = next(unique_number_gen)
-            print("episode_id", episode_id)
-            episode["episode_metadata"]["episode_id"] += episode_id
+        # if "add_file_path_episode_id" in mods:
+        #     episode_id = next(unique_number_gen)
+        #     print("episode_id", episode_id)
+        #     episode["episode_metadata"]["episode_id"] += episode_id
         yield episode
 
 
