@@ -176,7 +176,7 @@ class AddFilePathEpisodeID(TfdsModFunction):
             "episode_metadata": {
                 **{key: features["episode_metadata"][key] for key in features["episode_metadata"].keys() if key not in ("file_path", "episode_id",)},
                 "file_path": tfds.features.Text() if "file_path" not in features["episode_metadata"].keys() else features["episode_metadata"]["file_path"],
-                "episode_id": tfds.features.Text() if "episode_id" not in features["episode_metadata"].keys() else features["episode_metadata"]["episode_id"],
+                "episode_id": tfds.features.Text(doc="Episode ID.") if "episode_id" not in features["episode_metadata"].keys() else features["episode_metadata"]["episode_id"],
             }
         })
         return new_features  # no feature changes
